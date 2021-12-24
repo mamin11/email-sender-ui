@@ -1,32 +1,75 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <v-app>
+    <v-app-bar app color="dark" dark class="app-bar">
+      <v-spacer class="app-row">EMAIL-SENDER</v-spacer>
+
+      <v-row class="app-row" align="center" justify="end">
+        <v-col cols="2">
+          <v-badge color="red" :content="totalOrders" overlap>
+            total orders
+            <v-btn icon>
+              <v-icon>mdi-cart</v-icon>
+            </v-btn>
+          </v-badge>
+        </v-col>
+
+        <v-col cols="2">
+          <v-badge color="green" :content="emailsSent" overlap>
+            email sent
+            <v-btn icon>
+              <v-icon>mdi-email</v-icon>
+            </v-btn>
+          </v-badge>
+        </v-col>
+      </v-row>
+    </v-app-bar>
+
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { mapGetters} from 'vuex';
 
-#nav {
-  padding: 30px;
-}
+export default {
+  name: "App",
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  mounted() {
+    this.getAndSetData()
+  },
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+  data: () => ({
+    //
+  }),
+
+  computed: {
+    ...mapGetters({
+      totalOrders: 'getTotalOrders',
+      emailsSent: 'getEmailsSent',
+      send_notification_response: 'getSendNotificationResponse'
+    })
+  },
+
+  methods: {
+    async getAndSetData() {
+      const formData = new FormData();
+      formData.append("_method", "GET")
+
+      await this.$store.dispatch('setTotalOrders', formData)
+      await this.$store.dispatch('setEmailsSent', formData)
+    }
+  }
+
+};
+</script>
+
+<style scoped>
+.app-bar {
+  padding: 15px 10px !important;
+}
+.app-row {
+  padding-bottom: 15px;
 }
 </style>
